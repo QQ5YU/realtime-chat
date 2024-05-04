@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -11,12 +12,16 @@ export default function Register() {
 
   const handleSetPassword = (e) => {
     setPassword(e.target.value);
-    console.log(`password: ${password}`);
+  };
+
+  const register = async () => {
+    const response = await axios.post(`/register`, { username, password });
+    console.log(response);
   };
 
   return (
     <div className="bg-blue-50 h-screen flex items-center">
-      <form action="" className="w-64 mx-auto">
+      <form className="w-64 mx-auto" onSubmit={register}>
         <input
           type="text"
           placeholder="username"
