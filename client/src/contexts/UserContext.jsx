@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext } from "react";
 import axiosInstance from "../axiosInstance";
+
 export const UserContext = createContext({});
 
 export function UserContextProvider({ children }) {
@@ -8,7 +9,7 @@ export function UserContextProvider({ children }) {
 
   useEffect(() => {
     axiosInstance.get("/profile").then((response) => {
-      setId(response.data.id);
+      setId(response.data.userId);
       setUsername(response.data.username);
     });
   }, []);

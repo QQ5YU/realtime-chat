@@ -5,7 +5,7 @@ import { UserContext } from "../contexts/UserContext";
 export default function RegisterAndLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoginOrRegister, setLoginOrRegister] = useState("Register");
+  const [isLoginOrRegister, setLoginOrRegister] = useState("Login");
   const { setUsername: setLoggedInUsername, setId } = useContext(UserContext);
 
   const registerData = {
@@ -27,7 +27,7 @@ export default function RegisterAndLogin() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const url = isLoginOrRegister === "Register" ? "/register" : "/login";
+    const url = isLoginOrRegister === "Register" ? "register" : "login";
     const { data } = await axiosInstance.post(url, registerData);
     setLoggedInUsername(username);
     setId(data.id);
@@ -37,20 +37,24 @@ export default function RegisterAndLogin() {
     <div className="bg-blue-50 h-screen flex items-center">
       <form className="w-64 mx-auto" onSubmit={handleRegister}>
         <input
+          value={username}
           type="text"
           placeholder="username"
           className="block w-full rounded-sm p-2 mb-2 border"
           onChange={handleSetUsername}
+          required
         />
         <input
           type="password"
           placeholder="password"
           className="block w-full rounded-sm p-2 mb-2 border"
           onChange={handleSetPassword}
+          value={password}
+          required
         />
 
         <button className="bg-blue-500 text-white block w-full rounded-sm p-2">
-          {isLoginOrRegister === "Login" ? "Login" : "Register"}
+          {isLoginOrRegister === "Register" ? "Register" : "Login"}
         </button>
 
         {isLoginOrRegister === "Register" ? (
