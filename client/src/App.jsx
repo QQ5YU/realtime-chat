@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
-import Route from "./Route";
+import Routes from "./Routes";
 import { UserContextProvider } from "./contexts/UserContext";
 
 function App() {
   return (
     <>
       <UserContextProvider>
-        <Route />
+        <Routes />
       </UserContextProvider>
     </>
   );
