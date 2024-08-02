@@ -1,13 +1,13 @@
-import Register from "./components/Register";
-import axios from "axios";
+/* eslint-disable no-unused-vars */
+import Routes from "./Routes";
+import { UserContextProvider } from "./contexts/UserContext";
 
 function App() {
-  axios.defaults.baseURL = "http://localhost:4000";
-  axios.defaults.withCredentials = true;
-  
   return (
     <>
-      <Register />
+      <UserContextProvider>
+        <Routes />
+      </UserContextProvider>
     </>
   );
 }
