@@ -10,29 +10,28 @@ const UserModel = require("./models/User");
 const MessageModel = require("./models/Message");
 const fs = require("fs");
 const path = require("path");
+
 const app = express();
-
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.json());
-app.use(cookieParser());
-dotenv.config();
-
+const port = process.env.PORT || 4000;
+const mongoURL = process.env.SERVER_MONGODB_URL || "not found";
+const jwtSecret = process.env.SERVER_JWT_SECRET || "not found";
+const bcryptSalt = bcrypt.genSaltSync(10);
 const whiteList = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
   "http://127.0.0.1:5173",
 ];
 
-const mongoURL = process.env.SERVER_MONGODB_URL || "not found";
-const jwtSecret = process.env.SERVER_JWT_SECRET || "not found";
-const bcryptSalt = bcrypt.genSaltSync(10);
-
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.json());
+app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
     origin: whiteList,
   })
 );
+dotenv.config();
 
 mongoose.connect(mongoURL).then(() => console.log("connected to MongoDB"));
 
@@ -48,8 +47,20 @@ function getUserDataFromRequest(req) {
   });
 }
 
+function notifyAboutOnlineUser() {
+  [...wss.clients].forEach((client) => {
+    client.send(
+      JSON.stringify({
+        online: [...wss.clients].map((c) => ({
+          userId: c.userId,
+          username: c.username,
+        })),
+      })
+    );
+  });
+}
+
 app.get("/", async (req, res) => {
-  // await UserModel.deleteMany({});
   const data = await UserModel.find({});
   res.json(data);
 });
@@ -134,24 +145,11 @@ app.post("/logout", async (req, res) => {
     .json("success logout");
 });
 
-const server = app.listen(4000, () => {
-  console.log("listening on port 4000");
+const server = app.listen(port, () => {
+  console.log(`listening on port ${port}`);
 });
 
 const wss = new ws.WebSocketServer({ server });
-
-function notifyAboutOnlineUser() {
-  [...wss.clients].forEach((client) => {
-    client.send(
-      JSON.stringify({
-        online: [...wss.clients].map((c) => ({
-          userId: c.userId,
-          username: c.username,
-        })),
-      })
-    );
-  });
-}
 
 wss.on("connection", (connection, req) => {
   connection.isAlive = true;
@@ -231,3 +229,5 @@ wss.on("connection", (connection, req) => {
   // notify everyone about online people when everyone connect
   notifyAboutOnlineUser();
 });
+
+module.exports = app;

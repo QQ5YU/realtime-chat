@@ -1,0 +1,21 @@
+{
+    "version": 2,
+    "installCommand": "npm install",
+    "builds": [
+        {
+            "src": "index.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "index.js",
+            "headers": {
+                "Access-Control-Allow-Origin": "https://realtime-chat-frontend-git-main-qq5yus-projects.vercel.app/",
+                "Access-Control-Allow-Methods": "GET,OPTIONS,PATCH,DELETE,POST,PUT",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization"
+            }
+        }
+    ]
+}
